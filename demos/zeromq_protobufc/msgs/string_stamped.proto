@@ -1,0 +1,6 @@
+import "time.proto";
+
+message StringStamped {
+	required Time stamp = 1;
+	required string msg = 2;
+}

@@ -1,0 +1,4 @@
+message Time {
+	required uint32 secs = 1;
+	required uint32 nsecs = 2;
+}
