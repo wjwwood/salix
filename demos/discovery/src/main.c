@@ -25,8 +25,8 @@
 #define ROS_TOPO_MSG_DISC_REQ   0x20
 #define ROS_TOPO_MSG_DISC_RSP   0x21
 
-#define HELLO_PORT 12345
-#define HELLO_GROUP "225.0.0.37"
+#define HELLO_PORT 11311
+#define HELLO_GROUP "225.82.79.83"
 
 #pragma pack(1)
 
@@ -81,11 +81,22 @@ diff_timespec (struct timespec *start, struct timespec *end, struct timespec *re
 struct sockaddr_in addr, addr2;
 int fd;
 
+uint32_t
+get_ecosystem_id()
+{
+    char * value = getenv(ROS_ECOSYSTEM_VAR_NAME);
+    if (!value)
+    {
+        return 1;
+    }
+    return atoi(value);
+}
+
 static void
 shutdown_handler (int signal)
 {
     struct broadcast_message bm_out;
-    bm_out.ecosystem_id = atoi(getenv(ROS_ECOSYSTEM_VAR_NAME));
+    bm_out.ecosystem_id = get_ecosystem_id();
     bm_out.process_id = getpid();
     bm_out.node_id = create_node_id(bm_out.process_id);
     bm_out.msg_type = ROS_TOPO_MSG_DOWN;
@@ -104,7 +115,7 @@ main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     struct broadcast_message bm, bm_out;
-    bm_out.ecosystem_id = atoi(getenv(ROS_ECOSYSTEM_VAR_NAME));
+    bm_out.ecosystem_id = get_ecosystem_id();
     bm_out.process_id = getpid();
     printf("The process id of this node is [%d]\n", bm_out.process_id);
     bm_out.node_id = create_node_id(bm_out.process_id);
@@ -162,7 +173,6 @@ main(int argc, char *argv[]) {
         exit(1);
     }
 
-    /* now just sendto() our destination! */
     struct timespec last_update, now, result;
     int first_time = 1;
     while (1) {
